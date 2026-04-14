@@ -342,16 +342,14 @@
   }
 
   .three-acts {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.25rem;
-    justify-content: center;
-    align-items: stretch;
     text-align: left;
-    flex-wrap: wrap;
   }
   .act-card {
-    flex: 1 1 240px;
-    max-width: 320px;
+    min-width: 0;
+    max-width: none;
     background: #fdf6f0;
     border: 1px solid #f2c4b8;
     border-radius: 2px;
@@ -400,6 +398,87 @@
     border-radius: 2px;
     padding: 3px 10px;
   }
+  .logo-track-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 1.35rem 0;
+    margin-top: 1.25rem;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
+  .logo-track-wrapper:focus-within .logo-track {
+    animation-play-state: paused;
+  }
+  .logo-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: max-content;
+    animation: logo-scroll var(--logo-speed, 28s) linear infinite;
+    will-change: transform;
+  }
+  .logo-track--slow {
+    --logo-speed: 40s;
+  }
+  .logo-track:hover {
+    animation-play-state: paused;
+  }
+  @keyframes logo-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-1 * var(--loop-distance, 50%))); }
+  }
+  .logo-set {
+    display: flex;
+    align-items: center;
+    gap: 42px;
+    padding-right: 42px;
+    flex-shrink: 0;
+  }
+  .logo-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    flex-shrink: 0;
+    opacity: 0.65;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+    filter: grayscale(100%);
+  }
+  .logo-item:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+  }
+  .logo-item img {
+    height: 100%;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+  .logo-item[data-brand="aol"] img { height: 32px; }
+  .logo-item[data-brand="ivillage"] img { height: 40px; }
+  .logo-item[data-brand="babycenter"] img { height: 30px; }
+  .logo-item[data-brand="brandless"] img { height: 28px; }
+  .logo-item[data-brand="sesame"] img { height: 42px; }
+
+  .logo-subhead {
+    margin-top: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #8a5040;
+  }
+  .logo-note {
+    margin-top: 0.7rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    line-height: 1.55;
+    color: #8a5040;
+  }
   .act-card .quote-small {
     margin-top: 1rem;
     font-family: 'Cormorant Garamond', serif;
@@ -408,6 +487,33 @@
     font-style: italic;
     color: #7b2415;
     line-height: 1.5;
+  }
+
+  .logo-section {
+    background: #fdf6f0;
+    padding: 60px 0 80px;
+    border-top: 1px solid #f2c4b8;
+    border-bottom: 1px solid #f2c4b8;
+    margin-top: 4.25rem;
+  }
+  .logo-section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .logo-section .eyebrow {
+    margin-bottom: 0;
+  }
+  .logo-section__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .logo-section .logo-subhead {
+    text-align: center;
+    margin-top: 1.75rem;
+  }
+  .logo-section .logo-note {
+    text-align: center;
   }
 
   .timeline-band {
@@ -529,7 +635,7 @@
   }
   @media (max-width: 768px) {
     .timeline-v { display: block; }
-    .three-acts { flex-direction: column; align-items: center; }
+    .three-acts { grid-template-columns: 1fr; }
     .act-card { max-width: 100%; }
   }
 
@@ -684,13 +790,23 @@
           <div class="act-card__num">01</div>
           <h3>The Builder</h3>
           <p>Tina spent three decades architecting human connection at planetary scale. AOL. iVillage. BabyCenter. Brandless. She coined the term “social media” before it was a category. Each platform taught her the same lesson: when people feel seen and connected, they ignite sparks that travel beyond borders.</p>
-          <div class="pill-row">
-            <span class="pill">AOL</span>
-            <span class="pill">iVILLAGE</span>
-            <span class="pill">BABYCENTER</span>
-            <span class="pill">BRANDLESS</span>
+          <div class="logo-track-wrapper" role="region" aria-label="Communities Tina built logos">
+            <div class="logo-track">
+              <div class="logo-set">
+                <div class="logo-item" data-brand="aol"><img src="logos/aol.png" alt="AOL"></div>
+                <div class="logo-item" data-brand="ivillage"><img src="logos/ivillage.png" alt="iVillage"></div>
+                <div class="logo-item" data-brand="babycenter"><img src="logos/babycenter.png" alt="BabyCenter"></div>
+                <div class="logo-item" data-brand="brandless"><img src="logos/brandless.png" alt="Brandless"></div>
+              </div>
+              <div class="logo-set" aria-hidden="true">
+                <div class="logo-item" data-brand="aol"><img src="logos/aol.png" alt="AOL"></div>
+                <div class="logo-item" data-brand="ivillage"><img src="logos/ivillage.png" alt="iVillage"></div>
+                <div class="logo-item" data-brand="babycenter"><img src="logos/babycenter.png" alt="BabyCenter"></div>
+                <div class="logo-item" data-brand="brandless"><img src="logos/brandless.png" alt="Brandless"></div>
+              </div>
+            </div>
           </div>
-        </article>
+              </article>
         <article class="act-card act-card--2">
           <div class="act-card__num">02</div>
           <h3>The Teacher</h3>
@@ -709,6 +825,8 @@
         </article>
       </div>
     </div>
+
+   
 
     <div class="timeline-band">
       <h3>A life in community</h3>
@@ -822,7 +940,7 @@
     </div>
 
     <div class="wheel-cta-band">
-      <a href="fortification_wheel.html">THE FORTIFICATION WHEEL →</a>
+      <a href="fortification_wheel.html">TINA'S FORTIFICATION WHEEL →</a>
     </div>
   </section>
 
@@ -1238,6 +1356,46 @@
     );
     mObs.observe(metricsRow);
   }
+
+  function setLogoLoopDistances() {
+    var tracks = document.querySelectorAll('.logo-track');
+    tracks.forEach(function (track) {
+      var firstSet = track.querySelector('.logo-set');
+      if (!firstSet) return;
+      var distance = firstSet.getBoundingClientRect().width;
+      if (distance > 0) {
+        track.style.setProperty('--loop-distance', distance + 'px');
+      }
+    });
+  }
+
+  var logoImgs = document.querySelectorAll('.logo-item img');
+  if (logoImgs.length) {
+    var loaded = 0;
+    logoImgs.forEach(function (img) {
+      if (img.complete) {
+        loaded += 1;
+        return;
+      }
+      img.addEventListener('load', function () {
+        loaded += 1;
+        if (loaded >= logoImgs.length) setLogoLoopDistances();
+      });
+      img.addEventListener('error', function () {
+        loaded += 1;
+        if (loaded >= logoImgs.length) setLogoLoopDistances();
+      });
+    });
+    if (loaded >= logoImgs.length) {
+      setLogoLoopDistances();
+    } else {
+      setTimeout(setLogoLoopDistances, 600);
+    }
+  } else {
+    setLogoLoopDistances();
+  }
+
+  window.addEventListener('resize', setLogoLoopDistances);
 })();
 </script>
 </body>
