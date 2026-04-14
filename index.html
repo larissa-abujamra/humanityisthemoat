@@ -101,11 +101,539 @@
     max-width: 26rem;
     line-height: 1.6;
   }
+
+  /* ----- Fixed nav (shown after hero scroll) ----- */
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+    background: rgba(253, 246, 240, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid #f2c4b8;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 300ms ease, transform 300ms ease;
+  }
+  .site-nav.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .site-nav__brand {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: #9c3020;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .site-nav__brand:hover { color: #7b2415; }
+  .site-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+  .site-nav__links a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: #8a5040;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .site-nav__links a:hover { color: #9c3020; }
+  .site-nav__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9c3020;
+  }
+  .site-nav__toggle span {
+    display: block;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+  .site-nav__drawer {
+    display: none;
+    position: absolute;
+    top: 52px;
+    left: 0;
+    right: 0;
+    padding: 1rem 1.25rem 1.25rem;
+    background: rgba(253, 246, 240, 0.98);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #f2c4b8;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .site-nav__drawer.is-open { display: flex; }
+  .site-nav__drawer a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: #8a5040;
+    text-decoration: none;
+  }
+  .site-nav__drawer a:hover { color: #9c3020; }
+  @media (max-width: 768px) {
+    .site-nav__links { display: none; }
+    .site-nav__toggle { display: flex; }
+  }
+
+  /* ----- Page sections ----- */
+  main.page-main {
+    position: relative;
+    z-index: 2;
+  }
+  .section-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 600ms ease, transform 600ms ease;
+  }
+  .section-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .section-reveal .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 600ms ease, transform 600ms ease;
+  }
+  .section-reveal.is-visible .reveal-stagger > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .section-reveal.is-visible .reveal-stagger > *:nth-child(1) { transition-delay: 0ms; }
+  .section-reveal.is-visible .reveal-stagger > *:nth-child(2) { transition-delay: 100ms; }
+  .section-reveal.is-visible .reveal-stagger > *:nth-child(3) { transition-delay: 200ms; }
+  .section-reveal.is-visible .reveal-stagger > *:nth-child(4) { transition-delay: 300ms; }
+  .section-reveal.is-visible .reveal-stagger > *:nth-child(5) { transition-delay: 400ms; }
+  .section-reveal.is-visible .reveal-stagger > *:nth-child(6) { transition-delay: 500ms; }
+
+  #what, #about, #talk, #newsletter {
+    scroll-margin-top: 60px;
+  }
+
+  .sec-what {
+    background: #fdf6f0;
+    padding: 120px 1.5rem;
+  }
+  .sec-what__inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #8a5040;
+    margin-bottom: 1rem;
+  }
+  .sec-what h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1.15;
+    color: #1a0a08;
+    margin-bottom: 0;
+  }
+  .divider-rule {
+    width: 40px;
+    height: 1px;
+    background: #d97060;
+    margin: 2rem 0;
+  }
+  .prose {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: #4a2018;
+    max-width: 56ch;
+  }
+  .prose p + p { margin-top: 1.25rem; }
+  .pull-quote {
+    margin-top: 2rem;
+    padding-left: 1.5rem;
+    border-left: 3px solid #c85540;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    color: #7b2415;
+    line-height: 1.45;
+  }
+  .scroll-hint {
+    margin-top: 3.5rem;
+    text-align: center;
+  }
+  .scroll-hint__label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: #e8998a;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .scroll-hint__line {
+    width: 1px;
+    height: 20px;
+    margin: 0 auto;
+    background: linear-gradient(to bottom, transparent, #e8998a, transparent);
+    animation: scrollLine 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0%, 100% { opacity: 0; transform: translateY(0); }
+    40% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(12px); }
+  }
+
+  .sec-about {
+    background: #f5e8df;
+    padding: 120px 1.5rem 0;
+  }
+  .sec-about__inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .sec-about__inner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: #1a0a08;
+    margin-top: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .sec-about__intro {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: #4a2018;
+    max-width: 52ch;
+    margin: 0 auto 4rem;
+    line-height: 1.8;
+  }
+
+  .three-acts {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: center;
+    align-items: stretch;
+    text-align: left;
+    flex-wrap: wrap;
+  }
+  .act-card {
+    flex: 1 1 240px;
+    max-width: 320px;
+    background: #fdf6f0;
+    border: 1px solid #f2c4b8;
+    border-radius: 2px;
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    border-left: 4px solid #c85540;
+  }
+  .act-card--2 { border-left-color: #9c3020; }
+  .act-card--3 { border-left-color: #7b2415; }
+  .act-card__num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: #f2c4b8;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .act-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: #1a0a08;
+    margin-bottom: 1rem;
+  }
+  .act-card p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #4a2018;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 1.25rem;
+  }
+  .pill {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    background: #f9e5df;
+    color: #9c3020;
+    border: 1px solid #e8998a;
+    border-radius: 2px;
+    padding: 3px 10px;
+  }
+  .act-card .quote-small {
+    margin-top: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    font-style: italic;
+    color: #7b2415;
+    line-height: 1.5;
+  }
+
+  .timeline-band {
+    background: #fdf6f0;
+    margin-top: 5rem;
+    padding: 80px max(2rem, 10vw);
+  }
+  .timeline-band h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: #1a0a08;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .timeline-h {
+    display: none;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .tl-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
+    gap: 0.75rem 0.35rem;
+    align-items: start;
+  }
+  .tl-cell {
+    text-align: center;
+    min-width: 0;
+  }
+  .tl-cell--card {
+    max-width: 140px;
+    margin: 0 auto;
+  }
+  .tl-row-mid {
+    grid-column: 1 / -1;
+    position: relative;
+    height: 28px;
+    margin: 0.35rem 0;
+  }
+  .tl-row-mid::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: #e8998a;
+    transform: translateY(-50%);
+  }
+  .tl-row-mid__dots {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 2px;
+  }
+  .tl-row-mid__dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #c85540;
+    flex-shrink: 0;
+  }
+  .tl-node__year {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: #8a5040;
+    margin-bottom: 0.35rem;
+  }
+  .tl-node__title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #1a0a08;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+  .tl-node__desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #8a5040;
+    line-height: 1.35;
+  }
+
+  .timeline-v {
+    display: none;
+    max-width: 520px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .timeline-v__item {
+    position: relative;
+    padding: 0 0 1.75rem 1.5rem;
+    border-left: 1px solid #e8998a;
+    margin-left: 6px;
+  }
+  .timeline-v__item:last-child { border-left-color: transparent; }
+  .timeline-v__item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0.2rem;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background: #c85540;
+  }
+  @media (min-width: 769px) {
+    .timeline-h { display: block; }
+    .timeline-v { display: none; }
+  }
+  @media (max-width: 768px) {
+    .timeline-v { display: block; }
+    .three-acts { flex-direction: column; align-items: center; }
+    .act-card { max-width: 100%; }
+  }
+
+  .metrics-band {
+    background: #fdf6f0;
+    padding: 80px max(2rem, 10vw) 100px;
+  }
+  .metrics-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .metric {
+    flex: 1 1 180px;
+    text-align: center;
+    max-width: 220px;
+  }
+  .metric__num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 300;
+    color: #9c3020;
+    line-height: 1.1;
+  }
+  .metric__label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: #8a5040;
+    margin-top: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .wheel-cta-band {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #f5e8df, #fdf6f0);
+  }
+  .wheel-cta-band a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: #9c3020;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.25s ease;
+  }
+  .wheel-cta-band a:hover { opacity: 1; }
+
+  .sec-placeholder {
+    background: #fdf6f0;
+    padding: 100px 1.5rem;
+    border-top: 1px solid #f2c4b8;
+  }
+  .sec-placeholder__inner {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .sec-placeholder h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: #1a0a08;
+    margin-bottom: 0.75rem;
+  }
+  .sec-placeholder p {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: #8a5040;
+  }
 </style>
 </head>
 <body>
 
-<div class="hero">
+<nav class="site-nav" id="site-nav" aria-label="Primary">
+  <button type="button" class="site-nav__brand" id="nav-brand">SPARKS WITH SOUL</button>
+  <div class="site-nav__links">
+    <a href="#about">About</a>
+    <a href="fortification_wheel.html">Ideas</a>
+    <a href="#talk">The Talk</a>
+    <a href="#newsletter">Newsletter</a>
+  </div>
+  <button type="button" class="site-nav__toggle" id="nav-toggle" aria-expanded="false" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="site-nav__drawer" id="nav-drawer" aria-hidden="true">
+    <a href="#about">About</a>
+    <a href="fortification_wheel.html">Ideas</a>
+    <a href="#talk">The Talk</a>
+    <a href="#newsletter">Newsletter</a>
+  </div>
+</nav>
+
+<div class="hero" id="hero">
   <p class="hero-eyebrow">TINA SHARKEY</p>
 
   <div class="canvas-stage">
@@ -118,6 +646,198 @@
 
   <p class="hero-hint">The line holds once it forms; reload the page to see the motion again.</p>
 </div>
+
+<main class="page-main">
+
+  <section id="what" class="sec-what section-reveal" aria-labelledby="what-heading">
+    <div class="sec-what__inner reveal-stagger">
+      <p class="eyebrow">THE NEWSLETTER</p>
+      <h2 id="what-heading">A newsletter about<br>possibilities.</h2>
+      <div class="divider-rule" aria-hidden="true"></div>
+      <div class="prose">
+        <p>We are living through a transformation unlike anything we have seen in generations. AI is not just another tool. It is a partner we can dance with.</p>
+        <p>But here is what that really means: when everyone can dance with machines, the human leading the dance becomes everything. Your taste. Your judgment. Your questions. What you choose to make and why you choose to make it.</p>
+        <p>Sparks With Soul is where those questions live. It is a place for the moments, signals, and ideas that reveal where culture and business are headed — and what it means to stay irreducibly human while they do.</p>
+      </div>
+      <blockquote class="pull-quote">“While machines compute, humans connect.”</blockquote>
+      <div class="scroll-hint">
+        <span class="scroll-hint__label">SCROLL</span>
+        <div class="scroll-hint__line" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="sec-about section-reveal" aria-labelledby="about-heading">
+    <div class="sec-about__inner reveal-stagger">
+      <p class="eyebrow">THE BUILDER · THE TEACHER · THE PATIENT</p>
+      <h2 id="about-heading">Who is Tina Sharkey?</h2>
+      <p class="sec-about__intro">Three decades. Hundreds of millions of people connected. One brain tumor. And a framework for what it means to lead with soul in the age of AI.</p>
+
+      <div class="three-acts">
+        <article class="act-card act-card--1">
+          <div class="act-card__num">01</div>
+          <h3>The Builder</h3>
+          <p>Tina spent three decades architecting human connection at planetary scale. AOL. iVillage. BabyCenter. Brandless. She coined the term “social media” before it was a category. Each platform taught her the same lesson: when people feel seen and connected, they ignite sparks that travel beyond borders.</p>
+          <div class="pill-row">
+            <span class="pill">AOL</span>
+            <span class="pill">iVILLAGE</span>
+            <span class="pill">BABYCENTER</span>
+            <span class="pill">BRANDLESS</span>
+          </div>
+        </article>
+        <article class="act-card act-card--2">
+          <div class="act-card__num">02</div>
+          <h3>The Teacher</h3>
+          <p>Today Tina is a Lecturer at USC’s Jimmy Iovine and Andre Young Academy, where she directs the Innovation Quest and leads a Gen AI grant. From the classroom to the boardroom, she advises Fortune 500 companies and growth startups on strategy, storytelling, and what comes next in a world reshaped by AI.</p>
+          <div class="pill-row">
+            <span class="pill">USC Iovine &amp; Young Academy</span>
+            <span class="pill">Fortune 500 Advisor</span>
+            <span class="pill">Gen AI Grant Director</span>
+          </div>
+        </article>
+        <article class="act-card act-card--3">
+          <div class="act-card__num">03</div>
+          <h3>The Patient</h3>
+          <p>Last summer, a splitting headache that wouldn’t fade. Five days later, an ER at UCSF. A brain tumor the size of a small avocado. Inoperable, they said. Tina told her doctor: you handle the science, I’ll handle the soul. Ten days later, the tumor was gone — and a framework for living remained.</p>
+          <p class="quote-small">“Fear is a wasted emotion. Soul is the most powerful intelligence we have.”</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="timeline-band">
+      <h3>A life in community</h3>
+      <div class="timeline-h">
+        <div class="tl-grid">
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">1990s</p>
+            <p class="tl-node__title">AOL</p>
+            <p class="tl-node__desc">Early Web</p>
+          </div>
+          <div class="tl-cell"></div>
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">2006</p>
+            <p class="tl-node__title">BabyCenter</p>
+            <p class="tl-node__desc">Global Scale</p>
+          </div>
+          <div class="tl-cell"></div>
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">2019</p>
+            <p class="tl-node__title">Brandless</p>
+            <p class="tl-node__desc">Purpose Brand</p>
+          </div>
+          <div class="tl-cell"></div>
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">Today</p>
+            <p class="tl-node__title">AI Era</p>
+            <p class="tl-node__desc">Begins</p>
+          </div>
+
+          <div class="tl-row-mid">
+            <div class="tl-row-mid__dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="tl-cell"></div>
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">2000</p>
+            <p class="tl-node__title">iVillage</p>
+            <p class="tl-node__desc">Community Builder</p>
+          </div>
+          <div class="tl-cell"></div>
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">2012</p>
+            <p class="tl-node__title">“Social Media”</p>
+            <p class="tl-node__desc">coined</p>
+          </div>
+          <div class="tl-cell"></div>
+          <div class="tl-cell tl-cell--card">
+            <p class="tl-node__year">2023</p>
+            <p class="tl-node__title">USC / Iovine Academy</p>
+            <p class="tl-node__desc">&nbsp;</p>
+          </div>
+          <div class="tl-cell"></div>
+        </div>
+      </div>
+
+      <div class="timeline-v">
+        <div class="timeline-v__item">
+          <p class="tl-node__year">1990s</p>
+          <p class="tl-node__title">AOL</p>
+          <p class="tl-node__desc">Early Web</p>
+        </div>
+        <div class="timeline-v__item">
+          <p class="tl-node__year">2000</p>
+          <p class="tl-node__title">iVillage</p>
+          <p class="tl-node__desc">Community Builder</p>
+        </div>
+        <div class="timeline-v__item">
+          <p class="tl-node__year">2006</p>
+          <p class="tl-node__title">BabyCenter</p>
+          <p class="tl-node__desc">Global Scale</p>
+        </div>
+        <div class="timeline-v__item">
+          <p class="tl-node__year">2012</p>
+          <p class="tl-node__title">“Social Media”</p>
+          <p class="tl-node__desc">coined</p>
+        </div>
+        <div class="timeline-v__item">
+          <p class="tl-node__year">2019</p>
+          <p class="tl-node__title">Brandless</p>
+          <p class="tl-node__desc">Purpose Brand</p>
+        </div>
+        <div class="timeline-v__item">
+          <p class="tl-node__year">2023</p>
+          <p class="tl-node__title">USC / Iovine Academy</p>
+          <p class="tl-node__desc">&nbsp;</p>
+        </div>
+        <div class="timeline-v__item">
+          <p class="tl-node__year">Today</p>
+          <p class="tl-node__title">AI Era</p>
+          <p class="tl-node__desc">Begins</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-band section-reveal" id="metrics-section">
+      <div class="metrics-row" id="metrics-row">
+        <div class="metric">
+          <div class="metric__num" data-target="100" data-suffix="M+" data-format="int">0</div>
+          <p class="metric__label">PEOPLE CONNECTED THROUGH HER PLATFORMS</p>
+        </div>
+        <div class="metric">
+          <div class="metric__num" data-target="3" data-suffix="" data-format="int">0</div>
+          <p class="metric__label">DECADES BUILDING COMMUNITY</p>
+        </div>
+        <div class="metric">
+          <div class="metric__num" data-target="190" data-suffix="+" data-format="int">0</div>
+          <p class="metric__label">COUNTRIES REACHED VIA BABYCENTER</p>
+        </div>
+        <div class="metric">
+          <div class="metric__num" data-target="1" data-suffix="" data-format="int">0</div>
+          <p class="metric__label">BRAIN TUMOR SURVIVED</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wheel-cta-band">
+      <a href="fortification_wheel.html">THE FORTIFICATION WHEEL →</a>
+    </div>
+  </section>
+
+  <section id="talk" class="sec-placeholder section-reveal">
+    <div class="sec-placeholder__inner">
+      <h2>The Talk</h2>
+      <p>Coming soon.</p>
+    </div>
+  </section>
+
+  <section id="newsletter" class="sec-placeholder section-reveal">
+    <div class="sec-placeholder__inner">
+      <h2>Newsletter</h2>
+      <p>Coming soon.</p>
+    </div>
+  </section>
+
+</main>
 
 <script>
 (function () {
@@ -389,6 +1109,132 @@
       cancelAnimationFrame(animationId);
     }
   });
+})();
+</script>
+<script>
+(function () {
+  'use strict';
+
+  var hero = document.getElementById('hero');
+  var nav = document.getElementById('site-nav');
+  var navBrand = document.getElementById('nav-brand');
+  var navToggle = document.getElementById('nav-toggle');
+  var navDrawer = document.getElementById('nav-drawer');
+
+  function updateNavVisibility() {
+    if (!hero || !nav) return;
+    var rect = hero.getBoundingClientRect();
+    if (rect.bottom <= 0) {
+      nav.classList.add('is-visible');
+    } else {
+      nav.classList.remove('is-visible');
+    }
+  }
+  if (hero && nav) {
+    window.addEventListener('scroll', updateNavVisibility, { passive: true });
+    window.addEventListener('resize', updateNavVisibility);
+    window.addEventListener('load', updateNavVisibility);
+    updateNavVisibility();
+  }
+
+  if (navBrand) {
+    navBrand.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (navDrawer) {
+        navDrawer.classList.remove('is-open');
+        navDrawer.setAttribute('aria-hidden', 'true');
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  function closeDrawer() {
+    if (!navDrawer || !navToggle) return;
+    navDrawer.classList.remove('is-open');
+    navDrawer.setAttribute('aria-hidden', 'true');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  if (navToggle && navDrawer) {
+    navToggle.addEventListener('click', function () {
+      var open = !navDrawer.classList.contains('is-open');
+      navDrawer.classList.toggle('is-open', open);
+      navDrawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    navDrawer.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', closeDrawer);
+    });
+  }
+
+  var revealEls = document.querySelectorAll('.section-reveal');
+  var revObs = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    },
+    { threshold: 0.2, rootMargin: '0px 0px -40px 0px' }
+  );
+  revealEls.forEach(function (el) {
+    revObs.observe(el);
+  });
+
+  var metricsDone = false;
+  var metricsRow = document.getElementById('metrics-row');
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+  function formatMetric(el, value) {
+    var suffix = el.getAttribute('data-suffix') || '';
+    var v = Math.round(value);
+    return String(v) + suffix;
+  }
+  function runMetrics() {
+    if (metricsDone || !metricsRow) return;
+    metricsDone = true;
+    var nums = metricsRow.querySelectorAll('.metric__num');
+    var duration = 1200;
+    var start = performance.now();
+    var targets = [];
+    nums.forEach(function (el) {
+      targets.push({
+        el: el,
+        end: parseFloat(el.getAttribute('data-target')) || 0,
+      });
+    });
+    function frame(now) {
+      var t = Math.min(1, (now - start) / duration);
+      var e = easeOutCubic(t);
+      targets.forEach(function (item) {
+        item.el.textContent = formatMetric(item.el, item.end * e);
+      });
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        targets.forEach(function (item) {
+          item.el.textContent = formatMetric(item.el, item.end);
+        });
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  if (metricsRow) {
+    var mObs = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            runMetrics();
+            mObs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+    mObs.observe(metricsRow);
+  }
 })();
 </script>
 </body>
