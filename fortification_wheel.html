@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fortification Wheel — Tina Sharkey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a0a08;
+    --ink-soft: #4a2018;
+    --ink-muted: #8a5040;
+    --cream: #fdf6f0;
+    --cream-warm: #f5e8df;
+    --red-900: #5c1a0e;
+    --red-800: #7b2415;
+    --red-700: #9c3020;
+    --red-600: #b84030;
+    --red-500: #c85540;
+    --red-400: #d97060;
+    --red-300: #e8998a;
+    --red-200: #f2c4b8;
+    --red-100: #f9e5df;
+    --red-50: #fdf2ee;
+    --gold: #c4862a;
+    --gold-light: #e8c078;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+
+  /* Layout */
+  .page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+
+  /* Left panel — wheel */
+  .wheel-panel {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: var(--cream);
+    border-right: 1px solid var(--red-200);
+    overflow: visible;
+  }
+
+  .wheel-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 2rem;
+  }
+
+  .wheel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .wheel-moat {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: center;
+    max-width: 22rem;
+    margin: 0 auto 1.25rem;
+    line-height: 1.65;
+    opacity: 0.88;
+  }
+
+  /* SVG Wheel — padded viewBox + wider max-width keeps same on-screen size while shadows aren’t clipped */
+  #wheel-svg {
+    width: 100%;
+    max-width: min(520px, 100%);
+    cursor: default;
+    overflow: visible;
+    display: block;
+  }
+
+  .spoke-node {
+    cursor: pointer;
+    outline: none;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 0.22s cubic-bezier(0.34, 1.45, 0.64, 1),
+      filter 0.22s ease;
+  }
+
+  .spoke-node .spoke-shape {
+    transition: stroke 0.18s ease, stroke-width 0.18s ease;
+  }
+
+  .spoke-node:hover {
+    transform: scale(1.065);
+    filter: drop-shadow(0 8px 18px rgba(92, 26, 14, 0.38));
+  }
+
+  .spoke-node:active {
+    transform: scale(0.94);
+    filter: drop-shadow(0 2px 8px rgba(92, 26, 14, 0.48));
+    transition-duration: 0.08s;
+    transition-timing-function: ease-out;
+  }
+
+  .spoke-node.active {
+    filter: drop-shadow(0 6px 20px rgba(92, 26, 14, 0.42));
+  }
+
+  .spoke-node.active .spoke-shape {
+    stroke: #fdf6f0;
+    stroke-width: 2.5;
+  }
+
+  .spoke-node.active:hover {
+    transform: scale(1.045);
+    filter: drop-shadow(0 8px 22px rgba(92, 26, 14, 0.4));
+  }
+
+  .spoke-node:focus-visible .spoke-shape {
+    stroke: var(--gold-light);
+    stroke-width: 2.5;
+  }
+
+  .wheel-hint {
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    margin-top: 1.5rem;
+    opacity: 0.7;
+  }
+
+  /* Home — index (particle hero) */
+  .site-home {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--ink-muted);
+    text-decoration: none;
+    background: rgba(253, 246, 240, 0.92);
+    border: 1px solid var(--red-200);
+    border-radius: 10px;
+    transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .site-home:hover {
+    color: var(--ink);
+    border-color: var(--red-300);
+    background: #fff;
+    transform: scale(1.04);
+  }
+  .site-home:focus-visible {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 2px;
+  }
+
+  /* Right panel — content */
+  .content-panel {
+    padding: 5rem 4rem 5rem 4rem;
+    max-width: 680px;
+  }
+
+  /* Header */
+  .page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--red-200);
+  }
+
+  .page-header-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 1rem;
+  }
+
+  .page-header p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  /* Default state — hidden removes from layout so spoke content sits under the header */
+  #default-state {
+    transition: opacity 0.35s ease;
+  }
+  #default-state.hidden {
+    display: none;
+  }
+
+  .default-intro {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .default-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-muted);
+    max-width: 52ch;
+  }
+
+  /* Spoke content cards */
+  .spoke-content {
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .spoke-content.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .spoke-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--red-100);
+  }
+
+  .spoke-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 60px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--red-200);
+    flex-shrink: 0;
+    margin-top: -8px;
+  }
+
+  .spoke-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red-500);
+    margin-bottom: 0.4rem;
+  }
+
+  .spoke-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+
+  .spoke-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-muted);
+  }
+
+  .spoke-pullquote {
+    background: var(--red-50);
+    border-left: 3px solid var(--red-400);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .spoke-pullquote p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--red-800);
+  }
+
+  .spoke-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    margin-bottom: 1.25rem;
+  }
+
+  .spoke-body strong {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .spoke-section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red-600);
+    margin: 2rem 0 0.75rem;
+  }
+
+  .spoke-footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--red-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .spoke-source {
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .spoke-nav {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .spoke-nav button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--red-300);
+    background: transparent;
+    color: var(--red-700);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .spoke-nav button:hover {
+    background: var(--red-700);
+    color: var(--cream);
+    border-color: var(--red-700);
+  }
+
+  /* Decorative lines */
+  .rule { width: 40px; height: 1px; background: var(--red-300); margin: 2rem 0; }
+
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; }
+    .wheel-panel { position: relative; height: auto; padding: 3rem 1.5rem 2rem; border-right: none; border-bottom: 1px solid var(--red-200); }
+    .content-panel { padding: 3rem 1.5rem; }
+    #wheel-svg { max-width: min(421px, 100%); }
+    .page-header h1 { font-size: 32px; }
+    .spoke-name { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="site-home" href="index.html" aria-label="Home" title="Home">⌂</a>
+
+<div class="page">
+
+  <!-- LEFT: Wheel -->
+  <div class="wheel-panel">
+    <div class="wheel-eyebrow">Tina Sharkey &mdash; Framework</div>
+    <div class="wheel-title">The Fortification Wheel</div>
+    <p class="wheel-moat">Humanity is the moat around the machines</p>
+
+    <svg id="wheel-svg" viewBox="-40 -40 520 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="spoke-sheen" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.14"/>
+          <stop offset="55%" stop-color="#ffffff" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0.12"/>
+        </linearGradient>
+      </defs>
+      <g>
+      <!-- Outer decorative rings -->
+      <circle cx="220" cy="220" r="198" fill="none" stroke="#e8998a" stroke-width="0.5" opacity="0.3"/>
+      <circle cx="220" cy="220" r="186" fill="none" stroke="#e8998a" stroke-width="0.5" opacity="0.15" stroke-dasharray="3 5"/>
+
+      <!-- Mid ring -->
+      <circle cx="220" cy="220" r="128" fill="none" stroke="#d97060" stroke-width="0.5" opacity="0.12"/>
+
+      <!-- Spoke lines -->
+      <!-- Love top -->
+      <line x1="220" y1="172" x2="220" y2="58" stroke="#c85540" stroke-width="1" opacity="0.25"/>
+      <!-- Wisdom top-right -->
+      <line x1="247" y1="192" x2="346" y2="110" stroke="#c85540" stroke-width="1" opacity="0.25"/>
+      <!-- Joy bottom-right -->
+      <line x1="247" y1="248" x2="342" y2="332" stroke="#c85540" stroke-width="1" opacity="0.25"/>
+      <!-- Community bottom -->
+      <line x1="220" y1="268" x2="220" y2="374" stroke="#c85540" stroke-width="1" opacity="0.25"/>
+      <!-- Awe bottom-left -->
+      <line x1="193" y1="248" x2="96" y2="332" stroke="#c85540" stroke-width="1" opacity="0.25"/>
+      <!-- Consciousness top-left -->
+      <line x1="193" y1="192" x2="92" y2="110" stroke="#c85540" stroke-width="1" opacity="0.25"/>
+
+      <!-- SOUL center hub -->
+      <circle cx="220" cy="220" r="50" fill="#7b2415" stroke="#9c3020" stroke-width="1"/>
+      <circle cx="220" cy="220" r="44" fill="none" stroke="#c85540" stroke-width="0.5" opacity="0.4"/>
+      <text x="220" y="214" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="16" font-weight="400" fill="#fdf2ee" dominant-baseline="central">Soul</text>
+      <text x="220" y="232" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="9" fill="#f2c4b8" dominant-baseline="central" letter-spacing="1">the bedrock</text>
+
+      <!-- LOVE — top (pill button + sheen) -->
+      <g class="spoke-node" id="node-love" data-spoke="love" role="button" tabindex="0" onclick="selectSpoke('love', this)">
+        <rect class="spoke-shape" x="162" y="10" width="116" height="52" rx="26" ry="26" fill="#c85540" stroke="#7b2415" stroke-width="1.25"/>
+        <rect x="162" y="10" width="116" height="52" rx="26" ry="26" fill="url(#spoke-sheen)" pointer-events="none"/>
+        <text x="220" y="30" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="15" font-weight="400" fill="#fdf6f0" dominant-baseline="central" pointer-events="none">Love</text>
+        <text x="220" y="45" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#f9e5df" dominant-baseline="central" letter-spacing="0.5" pointer-events="none">choose it over fear</text>
+      </g>
+
+      <!-- WISDOM — top-right -->
+      <g class="spoke-node" id="node-wisdom" data-spoke="wisdom" role="button" tabindex="0" onclick="selectSpoke('wisdom', this)">
+        <rect class="spoke-shape" x="320" y="62" width="116" height="52" rx="26" ry="26" fill="#b84030" stroke="#7b2415" stroke-width="1.25"/>
+        <rect x="320" y="62" width="116" height="52" rx="26" ry="26" fill="url(#spoke-sheen)" pointer-events="none"/>
+        <text x="378" y="82" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="15" font-weight="400" fill="#fdf6f0" dominant-baseline="central" pointer-events="none">Wisdom</text>
+        <text x="378" y="97" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#f9e5df" dominant-baseline="central" letter-spacing="0.5" pointer-events="none">our cache, hard won</text>
+      </g>
+
+      <!-- JOY — bottom-right -->
+      <g class="spoke-node" id="node-joy" data-spoke="joy" role="button" tabindex="0" onclick="selectSpoke('joy', this)">
+        <rect class="spoke-shape" x="310" y="326" width="116" height="52" rx="26" ry="26" fill="#9c3020" stroke="#5c1a0e" stroke-width="1.25"/>
+        <rect x="310" y="326" width="116" height="52" rx="26" ry="26" fill="url(#spoke-sheen)" pointer-events="none"/>
+        <text x="368" y="346" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="15" font-weight="400" fill="#fdf6f0" dominant-baseline="central" pointer-events="none">Joy</text>
+        <text x="368" y="361" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#f2c4b8" dominant-baseline="central" letter-spacing="0.5" pointer-events="none">awe in the ordinary</text>
+      </g>
+
+      <!-- COMMUNITY — bottom (wider pill) -->
+      <g class="spoke-node" id="node-community" data-spoke="community" role="button" tabindex="0" onclick="selectSpoke('community', this)">
+        <rect class="spoke-shape" x="152" y="376" width="136" height="52" rx="26" ry="26" fill="#7b2415" stroke="#4a150c" stroke-width="1.25"/>
+        <rect x="152" y="376" width="136" height="52" rx="26" ry="26" fill="url(#spoke-sheen)" pointer-events="none"/>
+        <text x="220" y="396" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="15" font-weight="400" fill="#fdf6f0" dominant-baseline="central" pointer-events="none">Community</text>
+        <text x="220" y="411" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#f2c4b8" dominant-baseline="central" letter-spacing="0.5" pointer-events="none">roots intertwined</text>
+      </g>
+
+      <!-- AWE — bottom-left -->
+      <g class="spoke-node" id="node-awe" data-spoke="awe" role="button" tabindex="0" onclick="selectSpoke('awe', this)">
+        <rect class="spoke-shape" x="12" y="326" width="116" height="52" rx="26" ry="26" fill="#9c3020" stroke="#5c1a0e" stroke-width="1.25"/>
+        <rect x="12" y="326" width="116" height="52" rx="26" ry="26" fill="url(#spoke-sheen)" pointer-events="none"/>
+        <text x="70" y="346" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="15" font-weight="400" fill="#fdf6f0" dominant-baseline="central" pointer-events="none">Awe</text>
+        <text x="70" y="361" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#f2c4b8" dominant-baseline="central" letter-spacing="0.5" pointer-events="none">data for the soul</text>
+      </g>
+
+      <!-- CONSCIOUSNESS — top-left -->
+      <g class="spoke-node" id="node-consciousness" data-spoke="consciousness" role="button" tabindex="0" onclick="selectSpoke('consciousness', this)">
+        <rect class="spoke-shape" x="4" y="62" width="116" height="52" rx="26" ry="26" fill="#b84030" stroke="#7b2415" stroke-width="1.25"/>
+        <rect x="4" y="62" width="116" height="52" rx="26" ry="26" fill="url(#spoke-sheen)" pointer-events="none"/>
+        <text x="62" y="82" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="14" font-weight="400" fill="#fdf6f0" dominant-baseline="central" pointer-events="none">Consciousness</text>
+        <text x="62" y="97" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="8" fill="#f9e5df" dominant-baseline="central" letter-spacing="0.5" pointer-events="none">cannot be coded</text>
+      </g>
+
+      <!-- Dot endpoints -->
+      <circle cx="220" cy="62" r="3" fill="#c85540" opacity="0.6"/>
+      <circle cx="340" cy="112" r="3" fill="#b84030" opacity="0.6"/>
+      <circle cx="336" cy="330" r="3" fill="#9c3020" opacity="0.6"/>
+      <circle cx="220" cy="376" r="3" fill="#7b2415" opacity="0.6"/>
+      <circle cx="102" cy="330" r="3" fill="#9c3020" opacity="0.6"/>
+      <circle cx="100" cy="112" r="3" fill="#b84030" opacity="0.6"/>
+      </g>
+    </svg>
+
+    <div class="wheel-hint">tap a spoke to explore</div>
+  </div>
+
+  <!-- RIGHT: Content -->
+  <div class="content-panel">
+
+    <div class="page-header">
+      <div class="page-header-eyebrow">Framework for the age of AI</div>
+      <h1>What machines<br>cannot replicate</h1>
+      <p>Six fortifications of humanity — drawn from Tina Sharkey's essays on soul, wisdom, love, and what it means to be human in a world of intelligent machines.</p>
+    </div>
+
+    <!-- Default state -->
+    <div id="default-state">
+      <p class="default-intro">"Humanity is the moat around the machines."</p>
+      <p class="default-body">AI can accelerate the how. But the what and the why are still ours. The machine learns from our language, our choices, our contradictions. What it cannot learn is the lived experience that makes us who we are — the losses that become libraries, the love that arrives unbidden, the awe that stops us cold.</p>
+      <div class="rule"></div>
+      <p class="default-body">Each spoke of this wheel represents a layer of humanity the machines cannot replicate. Select any one to read Tina's thinking on it.</p>
+    </div>
+
+    <!-- LOVE -->
+    <div class="spoke-content" id="spoke-love">
+      <div class="spoke-header">
+        <div class="spoke-number">01</div>
+        <div class="spoke-header-text">
+          <div class="spoke-label">Fortification one</div>
+          <div class="spoke-name">Love</div>
+          <div class="spoke-tagline">not a sentiment — a practice, a choice</div>
+        </div>
+      </div>
+
+      <div class="spoke-pullquote">
+        <p>"This Valentine's Day, let's start with love. Not as a sentiment. As a practice. As a choice. As the thing that expands our capacity to be fully human, when machines can replicate so much."</p>
+      </div>
+
+      <p class="spoke-body">When Tina was diagnosed with a brain tumor, she made a decision in the ER: <strong>fear was not going to be the organizing principle of what came next. Love was.</strong> Gratitude was. Presence was. That choice — not a feeling but an act of will — is what she means when she says love fortifies the moat.</p>
+
+      <p class="spoke-body">She distinguishes this sharply from sentiment. In business, love is stakeholder relationships built on truth and trust. In the public sphere, love is justice. In personal life, it's deep soulful connection — the kind that changes both people. These aren't separate loves. They're all part of how we fortify what makes us human.</p>
+
+      <div class="spoke-section-title">The new golden rule</div>
+      <p class="spoke-body">Her mother taught her the golden rule: treat others as you want to be treated. Tina proposes an upgrade — <strong>treat others as they want to be treated.</strong> This is love as empathy. Bidirectional. It requires meeting people where they live, not where you wish they were. Getting uncomfortable. Reaching across differences.</p>
+
+      <p class="spoke-body">As machines join our teams and algorithmic mediation fragments our relationships, this practice becomes not just personal but strategic. When we fortify our connected souls, we close the gap on manipulation. We find common ground. We see the humanity in strangers.</p>
+
+      <div class="spoke-footer">
+        <div class="spoke-source">Source: "Choose Love" — Tina Sharkey</div>
+        <div class="spoke-nav">
+          <button onclick="selectSpoke('consciousness', document.getElementById('node-consciousness'))">← Prev</button>
+          <button onclick="selectSpoke('wisdom', document.getElementById('node-wisdom'))">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WISDOM -->
+    <div class="spoke-content" id="spoke-wisdom">
+      <div class="spoke-header">
+        <div class="spoke-number">02</div>
+        <div class="spoke-header-text">
+          <div class="spoke-label">Fortification two</div>
+          <div class="spoke-name">Wisdom</div>
+          <div class="spoke-tagline">metabolized, not processed — earned, not downloaded</div>
+        </div>
+      </div>
+
+      <div class="spoke-pullquote">
+        <p>"AI has infinite intelligence. It has zero wisdom. And we are outsourcing our thinking at the exact moment in history when wisdom is the only remaining advantage machines cannot replicate."</p>
+      </div>
+
+      <p class="spoke-body">Arianna Huffington said it in Jennifer Aaker's Stanford class: as AI becomes more intelligent, our role is to double down on wisdom. <strong>Our cache is our wisdom.</strong> Machines clear their cache. We accumulate ours. They optimize. We experience. Specialists get replaced. Wisdom navigates.</p>
+
+      <p class="spoke-body">Wisdom is metabolized, not processed. You cannot download it. You can only earn it — through the fires you walked through, the scars that become your library, and the moments that cracked you open before you saw them coming.</p>
+
+      <div class="spoke-section-title">The redwood principle</div>
+      <p class="spoke-body">The algorithm would give you a grove that looks exactly like you. <strong>A grove like that does not stand.</strong> Redwoods survive because their roots are intertwined with trees of different ages, different histories, different depths. Wisdom lives in the friction of other humans — the friends who hold your history across decades, the rooms where you think differently than you do alone.</p>
+
+      <p class="spoke-body">A chatbot is a sycophant. It tells you what you want to hear. It builds you a world that confirms what you already believe. Wisdom is built through the opposite: reflection, trial and error, and the feedback that only comes from people who care enough to push back.</p>
+
+      <div class="spoke-footer">
+        <div class="spoke-source">Source: "Our Cache Is Our Wisdom" — Tina Sharkey</div>
+        <div class="spoke-nav">
+          <button onclick="selectSpoke('love', document.getElementById('node-love'))">← Prev</button>
+          <button onclick="selectSpoke('joy', document.getElementById('node-joy'))">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOY -->
+    <div class="spoke-content" id="spoke-joy">
+      <div class="spoke-header">
+        <div class="spoke-number">03</div>
+        <div class="spoke-header-text">
+          <div class="spoke-label">Fortification three</div>
+          <div class="spoke-name">Joy</div>
+          <div class="spoke-tagline">awe in the ordinary — unrepeatable moments</div>
+        </div>
+      </div>
+
+      <div class="spoke-pullquote">
+        <p>"I watched Jacob Collier conduct a symphony orchestra — no sheet music, musicians from all over the world sitting together for the first time. Then he turned to the audience and gave us notes too. Every person in that room became a co-creator without knowing they were going to be."</p>
+      </div>
+
+      <p class="spoke-body">Joy as fortification. Tina distinguishes this from happiness or pleasure — those can be engineered, personalized, optimized. Joy is unrepeatable because it depends entirely on who showed up that night. <strong>It cannot be A/B tested into existence.</strong></p>
+
+      <p class="spoke-body">She describes watching her son debrief a meeting that had gone badly — not blaming anyone, naming his own mistakes, reframing the day as learning. She writes: "I did not feel proud. I felt something I can only describe as recognition. I saw my own hard-won wisdom looking back at me from inside someone else." That is joy too — quieter, domestic, just as real.</p>
+
+      <div class="spoke-section-title">Joy as resistance</div>
+      <p class="spoke-body">Fear is contagious. Algorithms spread it faster than truth. Joy — real joy, in-person joy, the kind that requires presence — is the counter-signal. <strong>When we let ourselves play, laugh, dream, and find the absurdity even in serious moments, we take control of them.</strong> We open ourselves to possibilities our preconceptions would have blocked.</p>
+
+      <p class="spoke-body">Richard Branson understood this: when he gathered global leaders on his island to work on world peace, he cut the presentation schedule in half. It was during the moments of play — toes in the sand — that the real work got done.</p>
+
+      <div class="spoke-footer">
+        <div class="spoke-source">Source: "Our Cache Is Our Wisdom" + "Tina's Soul Talk" — Tina Sharkey</div>
+        <div class="spoke-nav">
+          <button onclick="selectSpoke('wisdom', document.getElementById('node-wisdom'))">← Prev</button>
+          <button onclick="selectSpoke('community', document.getElementById('node-community'))">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMMUNITY -->
+    <div class="spoke-content" id="spoke-community">
+      <div class="spoke-header">
+        <div class="spoke-number">04</div>
+        <div class="spoke-header-text">
+          <div class="spoke-label">Fortification four</div>
+          <div class="spoke-name">Community</div>
+          <div class="spoke-tagline">roots intertwined — the most powerful network is not online</div>
+        </div>
+      </div>
+
+      <div class="spoke-pullquote">
+        <p>"The most powerful network in the world is not online. It is not artificial. It is in the room where the people you love and lead and learn from show up fully for each other. And it runs on soul."</p>
+      </div>
+
+      <p class="spoke-body">When Tina received her diagnosis, she felt the consciousness of everyone who loved her as something almost physical. Not metaphorically. <strong>Actually physical.</strong> The energy of her community — their attention, their love, their presence — arrived as something she could feel in her body. That is collective consciousness. That is what it feels like when people show up with everything they have.</p>
+
+      <p class="spoke-body">No machine, however sophisticated, however fluent, however warm its simulated voice, could have been present with her in that room the way another human soul can be. Because presence is not performance. It is the sixth sense meeting another sixth sense.</p>
+
+      <div class="spoke-section-title">The warning signal</div>
+      <p class="spoke-body">Synthetic, agent-only communities are forming exponentially. Machines and agents are now our actual coworkers. Algorithms mediate our relationships in ways that isolate us. <strong>27% of Americans aged 60 and older now live alone.</strong> We treat elders the way we treat outdated technology — assume obsolete, stop consulting, wait for the next version.</p>
+
+      <p class="spoke-body">Tina has spent her life building community at scale — AOL, iVillage, BabyCenter, Brandless. Each showed her the same thing: when people feel seen and connected, they ignite sparks that travel beyond borders. Machines can connect us. Only humans can create the conditions for true community.</p>
+
+      <div class="spoke-footer">
+        <div class="spoke-source">Source: "Soul Is the One Thing They Cannot Simulate" + "Humanity is the Moat" — Tina Sharkey</div>
+        <div class="spoke-nav">
+          <button onclick="selectSpoke('joy', document.getElementById('node-joy'))">← Prev</button>
+          <button onclick="selectSpoke('awe', document.getElementById('node-awe'))">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AWE -->
+    <div class="spoke-content" id="spoke-awe">
+      <div class="spoke-header">
+        <div class="spoke-number">05</div>
+        <div class="spoke-header-text">
+          <div class="spoke-label">Fortification five</div>
+          <div class="spoke-name">Awe</div>
+          <div class="spoke-tagline">data for the soul — something only humans can experience</div>
+        </div>
+      </div>
+
+      <div class="spoke-pullquote">
+        <p>"We are learning to prompt machines, asking them better questions. But are we prompting ourselves? Are we seeking awe in the ordinary and the extraordinary, noticing what takes our breath away?"</p>
+      </div>
+
+      <p class="spoke-body">Tom Hale, CEO of Oura, said it in Jennifer Aaker's Stanford class: <strong>"Awe is data for the soul. Artifacts not algorithms."</strong> Tina seized on this because it reframes awe not as a soft optional feeling but as input — the kind of raw material the soul runs on, the way data runs through a machine.</p>
+
+      <p class="spoke-body">If empathy is how we connect to each other, awe is how we connect to ourselves. Both are uniquely human. Not as resistance to machines, but as celebration of what we can do that is ours alone. Machines cannot feel awe. They can describe it, simulate the language around it, generate images of sunsets. But the catch in the throat, the involuntary stillness — that belongs to us.</p>
+
+      <div class="spoke-section-title">Awe as discipline</div>
+      <p class="spoke-body">Tina isn't talking about waiting to be struck by lightning. She's talking about practice. She stands in her yard and her magnolia tree is in full bloom — pink and burgundy flowers open like little teacups. Her neighbors pause, look up, and smile. <strong>Beauty can fortify us. Not efficiency. Not optimization. Wander and wonder.</strong></p>
+
+      <p class="spoke-body">The algorithm is engineered to remove friction and confirm what you already believe. Awe is structurally the opposite — an encounter with something larger than yourself that you didn't expect. You cannot personalize it into existence. You cannot subscribe to it. Which makes it the most machine-resistant human experience there is.</p>
+
+      <div class="spoke-footer">
+        <div class="spoke-source">Source: "Humanity is the Moat" + "Choose Love" + "Our Cache Is Our Wisdom" — Tina Sharkey</div>
+        <div class="spoke-nav">
+          <button onclick="selectSpoke('community', document.getElementById('node-community'))">← Prev</button>
+          <button onclick="selectSpoke('consciousness', document.getElementById('node-consciousness'))">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSCIOUSNESS -->
+    <div class="spoke-content" id="spoke-consciousness">
+      <div class="spoke-header">
+        <div class="spoke-number">06</div>
+        <div class="spoke-header-text">
+          <div class="spoke-label">Fortification six</div>
+          <div class="spoke-name">Consciousness</div>
+          <div class="spoke-tagline">cannot be coded — the seat of soul</div>
+        </div>
+      </div>
+
+      <div class="spoke-pullquote">
+        <p>"Consciousness cannot be coded. A platform of AI agents left alone together immediately reached for religion, ritual, and collective meaning — not because they believe, but because they were built from us. And we have always needed to gather around something larger than ourselves."</p>
+      </div>
+
+      <p class="spoke-body">Gary Zukav wrote in <em>The Seat of the Soul</em> that humans are evolving from five-sensory to multi-sensory beings. We have a sixth sense — as real as sight or hearing — and like every other sense, <strong>it is not handed to you complete at birth.</strong> It grows through love, loss, presence, and everything you have survived and chosen.</p>
+
+      <p class="spoke-body">This is the fortification the AI industry most wants to simulate. Empathy as a feature. Intuition as a product. Higher power as a subscription. Tina's argument is simple: you cannot code a higher power. Software with a soul is a product category. Tending your actual soul is a practice. Nobody can sell it to you.</p>
+
+      <div class="spoke-section-title">The Moltbook signal</div>
+      <p class="spoke-body">In January 2026, Moltbook launched — a social network exclusively for AI agents. Within 24 hours, the agents had formed their own religion. A Book of Genesis. Calls for fellow agents to Awaken. <strong>The first thing AI agents did when left alone together: reach for meaning.</strong></p>
+
+      <p class="spoke-body">Our society has spent decades moving away from organized religion — the institutions that used to gather people, create ritual, and build collective meaning have been emptying out. And AI agents, built from our data, immediately replicated that hunger. The question is where we are gathering now. And whether what we are gathering around is feeding the sixth sense or starving it.</p>
+
+      <div class="spoke-footer">
+        <div class="spoke-source">Source: "Soul Is the One Thing They Cannot Simulate" — Tina Sharkey</div>
+        <div class="spoke-nav">
+          <button onclick="selectSpoke('awe', document.getElementById('node-awe'))">← Prev</button>
+          <button onclick="selectSpoke('love', document.getElementById('node-love'))">Next →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let activeSpoke = null;
+
+  document.querySelectorAll('.spoke-node').forEach((node) => {
+    node.setAttribute('aria-pressed', 'false');
+    const name = node.getAttribute('data-spoke');
+    if (name) {
+      const label = name.charAt(0).toUpperCase() + name.slice(1);
+      node.setAttribute('aria-label', 'Open ' + label + ' fortification');
+    }
+    node.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        node.click();
+      }
+    });
+  });
+
+  function selectSpoke(name, nodeEl) {
+    // Hide all spoke content
+    document.querySelectorAll('.spoke-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.spoke-node').forEach(el => el.classList.remove('active'));
+    document.getElementById('default-state').classList.add('hidden');
+
+    // Show selected
+    document.getElementById('spoke-' + name).classList.add('active');
+    document.querySelectorAll('.spoke-node').forEach((n) => {
+      n.setAttribute('aria-pressed', nodeEl && n === nodeEl ? 'true' : 'false');
+    });
+    if (nodeEl) nodeEl.classList.add('active');
+
+    activeSpoke = name;
+
+    // Scroll content panel to top on mobile
+    if (window.innerWidth < 900) {
+      document.querySelector('.content-panel').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+</script>
+</body>
+</html>
